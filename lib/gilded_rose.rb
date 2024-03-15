@@ -8,48 +8,46 @@ class GildedRose
   end
 
   def tick
-    if @name != "Aged Brie" and @name != "Backstage passes to a TAFKAL80ETC concert"
-      if @quality > 0
-        if @name != "Sulfuras, Hand of Ragnaros"
-          @quality = @quality - 1
-        end
-      end
-    else
-      if @quality < 50
-        @quality = @quality + 1
-        if @name == "Backstage passes to a TAFKAL80ETC concert"
-          if @days_remaining < 11
-            if @quality < 50
-              @quality = @quality + 1
-            end
-          end
-          if @days_remaining < 6
-            if @quality < 50
-              @quality = @quality + 1
-            end
-          end
-        end
-      end
-    end
-    if @name != "Sulfuras, Hand of Ragnaros"
-      @days_remaining = @days_remaining - 1
-    end
-    if @days_remaining < 0
-      if @name != "Aged Brie"
-        if @name != "Backstage passes to a TAFKAL80ETC concert"
-          if @quality > 0
-            if @name != "Sulfuras, Hand of Ragnaros"
-              @quality = @quality - 1
-            end
-          end
-        else
-          @quality = @quality - @quality
-        end
+    update_quality
+    update_days_remaining
+    post_date_quality_update if @days_remaining < 0
+  end
+
+  private
+
+  def update_quality
+    if @name == "Aged Brie"
+      increase_quality
+      increase_quality if @days_remaining <= 0
+    elsif @name == "Backstage passes to a TAFKAL80ETC concert"
+      if @days_remaining > 10
+        increase_quality
+      elsif @days_remaining > 5
+        increase_quality(2)
+      elsif @days_remaining > 0
+        increase_quality(3)
       else
-        if @quality < 50
-          @quality = @quality + 1
-        end
+        @quality = 0
       end
+    elsif @name != "Sulfuras, Hand of Ragnaros"
+      decrease_quality
+      decrease_quality if @days_remaining <= 0
     end
+  end
+
+  def update_days_remaining
+    @days_remaining -= 1 unless @name == "Sulfuras, Hand of Ragnaros"
+  end
+
+  def post_date_quality_update
+    # This method remains empty for now, intended for future logic
+  end
+
+  def increase_quality(amount = 1)
+    @quality += amount if @quality < 50
+  end
+
+  def decrease_quality(amount = 1)
+    @quality -= amount if @quality > 0
   end
 end
