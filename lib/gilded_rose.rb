@@ -40,7 +40,15 @@ class GildedRose
   end
 
   def post_date_quality_update
-    # This method remains empty for now, intended for future logic
+    return if @name == "Sulfuras, Hand of Ragnaros"
+
+    if @name == "Aged Brie"
+      increase_quality
+    elsif @name == "Backstage passes to a TAFKAL80ETC concert"
+      @quality = 0
+    else
+      decrease_quality
+    end
   end
 
   def increase_quality(amount = 1)
